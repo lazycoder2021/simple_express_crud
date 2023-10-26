@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+
+
+
+        .player, .edit, .del{
+            border:1px solid black;
+            width:600px;
+            cursor:pointer; 
+            padding:20px 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Cricket Player Management App</h2>
+    <form method="POST" action="/addplayer">
+        Player Name: <input type="text" name="name" /><br/><br />
+        Player Age: <input type="number" name="age" /><br /><br />
+        Player Role: <input type="text" name="role" /><br /><br />
+        <button type="submit">Create Player</button>
+    </form>
+    <br/>
+    <div class="players">
+
+    </div>
+
+
+    <script>
+        window.addEventListener('DOMContentLoaded', async function () {
+            /*
+            fetch('http://localhost:3000/getplayers')
+                .then((res) => {
+                    return res.json()
+                })
+                .then((data) => {
+                    console.log(data.msg)
+                    data.msg.forEach((d) => {
+                        console.log(d)
+                        document.querySelector('.players').innerHTML += `
+                            <div class="player" data-id=${d._id}>
+                                <span>${d._id}</span>
+                                <span>${d.name}</span>
+                                <span>${d.age}</span>
+                                <span>${d.role}</span>
+                                <span class="edit">Edit</span>
+                                <span class="del">Delete</span>
+                            </div>
+
+                        `;
+                    })
+                })
+
+                */
+
+
+            const response = await fetch('http://localhost:3000/getplayers'); 
+            const result = await response.json();
+            console.log(result.msg)
+
+            result.msg.forEach((d) => {
+                console.log(d)
+                document.querySelector('.players').innerHTML += `
+                            <div class="player" data-id=${d._id}>
+                                <span class="userId">${d._id}</span>
+                                <span>${d.name}</span>
+                                <span>${d.age}</span>
+                                <span>${d.role}</span>
+                                <span class="edit">Edit</span>
+                                <span class="del">Delete</span>
+                            </div>
+
+                `;
+
+                document.querySelectorAll('.edit').forEach((e) => {
+                    e.addEventListener('click', async function (e) {
+                        const newName = prompt('enter new name')
+                        const newAge = prompt('enter new age')
+                        const newRole = prompt('enter new role')
+                        console.log(e.target.parentElement.dataset.id)
+                        const id = e.target.parentElement.dataset.id;
+                        const response = await fetch(`http://localhost:3000/updateplayer/${id}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                name: newName,
+                                age: newAge,
+                                role: newRole
+                            })
+                        });
+                        const result = await response.json();
+                        console.log(result)
+                    })
+                })
+
+                document.querySelectorAll('.del').forEach((e) => {
+                    e.addEventListener('click', async function (e) {
+                        console.log(e.target.parentElement.dataset.id)
+                        const id = e.target.parentElement.dataset.id; 
+                        const response = await fetch(`http://localhost:3000/deleteplayer/${id}`, {
+                            method: 'DELETE'
+                        }); 
+                        const result = await response.json(); 
+                        console.log(result)
+                    })
+                })
+
+                document.querySelectorAll('.userId').forEach((e) => {
+                    e.addEventListener('click', async function (e) {
+                        console.log(e.target.parentElement.dataset.id)
+                        const id = e.target.parentElement.dataset.id;
+                        const response = await fetch(`http://localhost:3000/getplayer/${id}`, {
+                            method: 'GET'
+                        });
+                        const result = await response.json();
+                        console.log(result)
+                    })
+                })
+
+
+               
+
+
+            })
+
+
+
+
+        })
+    </script>
+</body>
+</html>
